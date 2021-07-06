@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "br.com.zupedu.armando";
+option java_outer_classname = "PixKeyManager";
+option objc_class_prefix = "HLW";
+
+package br.com.zupedu.armando;
+
+service PixKeyManagerService {
+  rpc send (PixKeyManagerRequest) returns (PixKeyManagerReply) {}
+}
+
+message PixKeyManagerRequest {
+  string name = 1;
+}
+
+message PixKeyManagerReply {
+  string message = 1;
+}

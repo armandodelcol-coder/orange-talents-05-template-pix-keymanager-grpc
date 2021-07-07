@@ -1,4 +1,4 @@
-package br.com.zupedu.armando.model
+package br.com.zupedu.armando.pix.model
 
 import br.com.zupedu.armando.TipoChave
 import br.com.zupedu.armando.TipoConta

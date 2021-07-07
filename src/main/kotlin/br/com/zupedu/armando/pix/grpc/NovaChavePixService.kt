@@ -1,9 +1,9 @@
-package br.com.zupedu.armando.grpc.services
+package br.com.zupedu.armando.pix.grpc
 
 import br.com.zupedu.armando.*
 import br.com.zupedu.armando.httpclients.ItauErpClient
-import br.com.zupedu.armando.model.ChavePix
-import br.com.zupedu.armando.repository.ChavePixRepository
+import br.com.zupedu.armando.pix.model.ChavePix
+import br.com.zupedu.armando.pix.repository.ChavePixRepository
 import io.grpc.Status
 import io.grpc.stub.StreamObserver
 import org.slf4j.LoggerFactory

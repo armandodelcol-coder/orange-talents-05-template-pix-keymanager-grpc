@@ -1,7 +1,7 @@
-package br.com.zupedu.armando.repository
+package br.com.zupedu.armando.pix.repository
 
 import br.com.zupedu.armando.TipoChave
-import br.com.zupedu.armando.model.ChavePix
+import br.com.zupedu.armando.pix.model.ChavePix
 import io.micronaut.data.annotation.Repository
 import io.micronaut.data.jpa.repository.JpaRepository
 

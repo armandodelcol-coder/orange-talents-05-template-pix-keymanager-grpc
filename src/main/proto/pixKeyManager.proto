@@ -8,13 +8,30 @@ option objc_class_prefix = "HLW";
 package br.com.zupedu.armando;
 
 service PixKeyManagerService {
-  rpc send (PixKeyManagerRequest) returns (PixKeyManagerReply) {}
+  rpc registrar (PixKeyManagerRequest) returns (PixKeyManagerResponse) {}
+}
+
+enum TipoChave {
+  TIPO_CHAVE_DESCONHECIDO = 0;
+  CPF = 1;
+  CELULAR = 2;
+  EMAIL = 3;
+  RANDOMICA = 4;
+}
+
+enum TipoConta {
+  TIPO_CONTA_DESCONHECIDO = 0;
+  CORRENTE = 1;
+  POUPANCA = 2;
 }
 
 message PixKeyManagerRequest {
-  string name = 1;
+  string clienteId = 1;
+  TipoChave tipoChave = 2;
+  string chave = 3;
+  TipoConta tipoConta = 4;
 }
 
-message PixKeyManagerReply {
-  string message = 1;
+message PixKeyManagerResponse {
+  string pixId = 1;
 }

@@ -17,7 +17,7 @@ class NovaChavePixEndpoint(
     private val validator: Validator,
     private val service: NovaChavePixService
 ): PixKeyManagerServiceGrpc.PixKeyManagerServiceImplBase() {
-    private val logger = LoggerFactory.getLogger(NovaChavePixService::class.java)
+    private val logger = LoggerFactory.getLogger(NovaChavePixEndpoint::class.java)
 
     override fun registrar(request: PixKeyManagerRequest, responseObserver: StreamObserver<PixKeyManagerResponse>) {
         // Validações de entrada

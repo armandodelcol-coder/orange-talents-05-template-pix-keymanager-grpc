@@ -1,12 +1,16 @@
 package br.com.zupedu.armando.pix.enum
 
 import br.com.zupedu.armando.core.handler.exceptions.ArgumentoDeEntradaInvalidoDefaultException
+import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator
 
 enum class TipoChave {
     CPF {
         override fun valida(chave: String?) {
-            if (chave.isNullOrBlank() || !chave.matches("^[0-9]{11}\$".toRegex())) {
-                throw ArgumentoDeEntradaInvalidoDefaultException("chave é obrigatória e formato esperado deve ser 12345678901")
+            if (chave.isNullOrBlank() || !CPFValidator().run {
+                    initialize(null)
+                    isValid(chave, null)
+                }) {
+                throw ArgumentoDeEntradaInvalidoDefaultException("chave é obrigatória e formato esperado deve ser um CPF válido.")
             }
         }
     },

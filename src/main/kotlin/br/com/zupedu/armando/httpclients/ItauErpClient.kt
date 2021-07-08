@@ -1,5 +1,6 @@
 package br.com.zupedu.armando.httpclients
 
+import br.com.zupedu.armando.httpclients.dtos.ContaClienteResponse
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.PathVariable
@@ -12,5 +13,5 @@ interface ItauErpClient {
     fun buscarCliente(@PathVariable clienteId: String): HttpResponse<Any>
 
     @Get("/v1/clientes/{clienteId}/contas")
-    fun buscarContaCliente(@PathVariable clienteId: String, @QueryValue("tipo") tipo: String): HttpResponse<Any>
+    fun buscarContaCliente(@PathVariable clienteId: String, @QueryValue("tipo") tipo: String): HttpResponse<ContaClienteResponse>
 }

@@ -12,7 +12,7 @@ service PixKeyManagerService {
 }
 
 enum TipoChave {
-  TIPO_CHAVE_DESCONHECIDO = 0;
+  CHAVE_DESCONHECIDA = 0;
   CPF = 1;
   CELULAR = 2;
   EMAIL = 3;
@@ -20,9 +20,9 @@ enum TipoChave {
 }
 
 enum TipoConta {
-  TIPO_CONTA_DESCONHECIDO = 0;
-  CORRENTE = 1;
-  POUPANCA = 2;
+  CONTA_DESCONHECIDA = 0;
+  CONTA_CORRENTE = 1;
+  CONTA_POUPANCA = 2;
 }
 
 message PixKeyManagerRequest {

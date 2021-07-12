@@ -8,19 +8,19 @@ class ValidaEnumTipoDesconhecido {
     companion object {
         fun tipoChave(tipoChave: TipoChave) {
             if (tipoChave.equals(TipoChave.CHAVE_DESCONHECIDA)) {
-                val tiposValidos = TipoChave.values()
+                val validos = TipoChave.values()
                     .filter { it.ordinal != 0 && it.ordinal != TipoChave.values().size - 1 }
                     .map { "${it.ordinal} - ${it.name}" }
-                throw ArgumentoDeEntradaInvalidoDefaultException("TipoChave é obrigatório e valores validos são: $tiposValidos")
+                throw ArgumentoDeEntradaInvalidoDefaultException("TipoChave é obrigatório e valores validos são: $validos")
             }
         }
 
         fun tipoConta(tipoConta: TipoConta) {
             if (tipoConta.equals(TipoConta.CONTA_DESCONHECIDA)) {
-                val tiposValidos = TipoConta.values()
+                val validos = TipoConta.values()
                     .filter { it.ordinal != 0 && it.ordinal != TipoConta.values().size - 1 }
                     .map { "${it.ordinal} - ${it.name}" }
-                throw ArgumentoDeEntradaInvalidoDefaultException("TipoConta é obrigatório e valores validos são: $tiposValidos")
+                throw ArgumentoDeEntradaInvalidoDefaultException("TipoConta é obrigatório e valores validos são: $validos")
             }
         }
     }

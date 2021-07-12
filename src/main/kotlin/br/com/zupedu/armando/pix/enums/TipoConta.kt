@@ -1,4 +1,4 @@
-package br.com.zupedu.armando.pix.enum
+package br.com.zupedu.armando.pix.enums
 
 enum class TipoConta {
     CONTA_CORRENTE,

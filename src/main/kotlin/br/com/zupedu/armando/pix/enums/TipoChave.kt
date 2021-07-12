@@ -1,4 +1,4 @@
-package br.com.zupedu.armando.pix.enum
+package br.com.zupedu.armando.pix.enums
 
 import br.com.zupedu.armando.core.handler.exceptions.ArgumentoDeEntradaInvalidoDefaultException
 import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator

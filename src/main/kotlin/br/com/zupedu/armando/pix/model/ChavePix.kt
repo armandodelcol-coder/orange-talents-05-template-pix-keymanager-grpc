@@ -1,7 +1,7 @@
 package br.com.zupedu.armando.pix.model
 
-import br.com.zupedu.armando.pix.enum.TipoChave
-import br.com.zupedu.armando.pix.enum.TipoConta
+import br.com.zupedu.armando.pix.enums.TipoChave
+import br.com.zupedu.armando.pix.enums.TipoConta
 import java.util.*
 import javax.persistence.*
 import javax.validation.Valid

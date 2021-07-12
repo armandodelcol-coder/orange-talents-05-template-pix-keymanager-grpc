@@ -3,7 +3,7 @@ package br.com.zupedu.armando.core.handler
 import br.com.zupedu.armando.core.handler.exceptions.ArgumentoDeEntradaInvalidoDefaultException
 import br.com.zupedu.armando.core.handler.exceptions.BadRequestErrorException
 import br.com.zupedu.armando.core.handler.exceptions.ChavePixJaExisteException
-import br.com.zupedu.armando.pix.grpc.NovaChavePixService
+import br.com.zupedu.armando.core.handler.exceptions.NotFoundDefaultException
 import io.grpc.Status
 import io.grpc.stub.StreamObserver
 import io.micronaut.aop.InterceptorBean
@@ -34,6 +34,10 @@ class ErrorAroundHandlerInterceptor : MethodInterceptor<Any, Any> {
                     .withDescription(ex.message)
 
                 is BadRequestErrorException -> Status.INTERNAL
+                    .withCause(ex)
+                    .withDescription(ex.message)
+
+                is NotFoundDefaultException -> Status.NOT_FOUND
                     .withCause(ex)
                     .withDescription(ex.message)
 

@@ -1,9 +1,9 @@
-package br.com.zupedu.armando.pix.grpc
+package br.com.zupedu.armando.pix.grpc.services
 
 import br.com.zupedu.armando.core.handler.exceptions.BadRequestErrorException
 import br.com.zupedu.armando.core.handler.exceptions.ChavePixJaExisteException
 import br.com.zupedu.armando.httpclients.ItauErpClient
-import br.com.zupedu.armando.pix.dtos.ChavePixDto
+import br.com.zupedu.armando.pix.grpc.dtos.RegistrarChavePixDto
 import br.com.zupedu.armando.pix.model.ChavePix
 import br.com.zupedu.armando.pix.repository.ChavePixRepository
 import io.micronaut.validation.Validated
@@ -19,7 +19,7 @@ class NovaChavePixService(
 ) {
     private val logger = LoggerFactory.getLogger(NovaChavePixService::class.java)
 
-    fun registra(@Valid novaChavePixDto: ChavePixDto): ChavePix {
+    fun registra(@Valid novaChavePixDto: RegistrarChavePixDto): ChavePix {
         // Verificar existencia do cliente
         val clienteResponse = itauErpClient.buscarCliente(novaChavePixDto.clienteId)
         when (clienteResponse.status.code) {

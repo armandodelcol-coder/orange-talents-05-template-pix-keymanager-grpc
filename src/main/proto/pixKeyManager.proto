@@ -7,8 +7,12 @@ option objc_class_prefix = "HLW";
 
 package br.com.zupedu.armando;
 
-service PixKeyManagerService {
-  rpc registrar (PixKeyManagerRequest) returns (PixKeyManagerResponse) {}
+service PixKeyManagerRegistrarService {
+  rpc registrar (RegistrarPixRequest) returns (RegistrarPixResponse) {}
+}
+
+service PixKeyManagerRemoverService {
+  rpc remover (RemoverPixRequest) returns (RemoverPixResponse) {}
 }
 
 enum TipoChave {
@@ -25,13 +29,22 @@ enum TipoConta {
   CONTA_POUPANCA = 2;
 }
 
-message PixKeyManagerRequest {
+message RegistrarPixRequest {
   string clienteId = 1;
   TipoChave tipoChave = 2;
   string chave = 3;
   TipoConta tipoConta = 4;
 }
 
-message PixKeyManagerResponse {
+message RegistrarPixResponse {
   string pixId = 1;
+}
+
+message RemoverPixRequest {
+  string pixId = 1;
+  string clienteId = 2;
+}
+
+message RemoverPixResponse {
+  string info = 1;
 }

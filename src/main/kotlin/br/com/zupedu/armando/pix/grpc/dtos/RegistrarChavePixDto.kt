@@ -1,7 +1,7 @@
-package br.com.zupedu.armando.pix.dtos
+package br.com.zupedu.armando.pix.grpc.dtos
 
-import br.com.zupedu.armando.pix.enum.TipoChave
-import br.com.zupedu.armando.pix.enum.TipoConta
+import br.com.zupedu.armando.pix.enums.TipoChave
+import br.com.zupedu.armando.pix.enums.TipoConta
 import br.com.zupedu.armando.pix.model.ChavePix
 import br.com.zupedu.armando.pix.model.ContaAssociada
 import io.micronaut.core.annotation.Introspected
@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
 @Introspected
-data class ChavePixDto(
+data class RegistrarChavePixDto(
     @field:NotBlank
     val clienteId: String,
 

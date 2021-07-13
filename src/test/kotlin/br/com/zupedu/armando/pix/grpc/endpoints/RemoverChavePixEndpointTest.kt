@@ -2,6 +2,8 @@ package br.com.zupedu.armando.pix.grpc.endpoints
 
 import br.com.zupedu.armando.PixKeyManagerRemoverServiceGrpc
 import br.com.zupedu.armando.RemoverPixRequest
+import br.com.zupedu.armando.httpclients.BcbClient
+import br.com.zupedu.armando.httpclients.DeletePixKeyRequest
 import br.com.zupedu.armando.httpclients.ItauErpClient
 import br.com.zupedu.armando.httpclients.dtos.ContaClienteResponse
 import br.com.zupedu.armando.pix.enums.TipoChave
@@ -30,7 +32,8 @@ import org.mockito.Mockito
 internal class RemoverChavePixEndpointTest(
     private val serviceGrpc: PixKeyManagerRemoverServiceGrpc.PixKeyManagerRemoverServiceBlockingStub,
     private val repository: ChavePixRepository,
-    private val itauErpClient: ItauErpClient
+    private val itauErpClient: ItauErpClient,
+    private val bcbClient: BcbClient,
 ) {
     val dummyRequest = RemoverPixRequest.newBuilder()
         .setClienteId("e7eb62c7-20a0-4d6f-90b1-dc4043ab7eb8")
@@ -43,7 +46,7 @@ internal class RemoverChavePixEndpointTest(
         tipoConta = TipoConta.CONTA_CORRENTE,
         conta = ContaAssociada(
             instituicaoNome = "ITAU",
-            instituicaoIspb = "123",
+            instituicaoIspb = "60701190",
             titularNome = "JOAO TESTADOR",
             titularCpf = "54486070046",
             agencia = "123",
@@ -58,7 +61,7 @@ internal class RemoverChavePixEndpointTest(
         tipoConta = TipoConta.CONTA_CORRENTE,
         conta = ContaAssociada(
             instituicaoNome = "ITAU",
-            instituicaoIspb = "123",
+            instituicaoIspb = "60701190",
             titularNome = "DIANA TESTADORA",
             titularCpf = "74582106056",
             agencia = "123",
@@ -68,7 +71,7 @@ internal class RemoverChavePixEndpointTest(
 
     val dummyContaChavePix2 = ContaClienteResponse(
         tipo = "CONTA_CORRENTE",
-        instituicao = ContaClienteResponse.InstituicaoResponse("ITAU", "123"),
+        instituicao = ContaClienteResponse.InstituicaoResponse("ITAU", "60701190"),
         agencia = "123",
         numero = "125478",
         titular = ContaClienteResponse.TitularResponse("DIANA TESTADORA", "74582106056")
@@ -161,6 +164,29 @@ internal class RemoverChavePixEndpointTest(
     }
 
     @Test
+    fun `deve retornar uma excpetion quando a chavePix não for excluida no BCB`() {
+        // cenario
+        repository.save(dummyChavePix2)
+        val chavePix = repository.findAll().first()
+        val request = dummyRequest
+            .setPixId(chavePix.pixId)
+            .setClienteId(chavePix.clienteId)
+            .build()
+        Mockito.`when`(itauErpClient.buscarContaCliente(request.clienteId, chavePix.tipoConta.name)).thenReturn(HttpResponse.ok(dummyContaChavePix2))
+        Mockito.`when`(bcbClient.deletarChavePix(chavePix.chave, DeletePixKeyRequest(chavePix.chave, chavePix.conta.instituicaoIspb))).thenReturn(HttpResponse.unprocessableEntity())
+        // acao
+        val response = assertThrows<StatusRuntimeException> {
+            serviceGrpc.remover(request)
+        }
+        // validacao
+        with(response) {
+            assertEquals(Status.INTERNAL.code, status.code)
+            assertEquals("Ocorreu um erro ao deletar a chave pix no BCB.", status.description)
+        }
+    }
+
+    // HAPPY PATH
+    @Test
     fun `deve remover a chavePix com sucesso`() {
         // cenario
         repository.save(dummyChavePix2)
@@ -170,6 +196,7 @@ internal class RemoverChavePixEndpointTest(
             .setClienteId(chavePix.clienteId)
             .build()
         Mockito.`when`(itauErpClient.buscarContaCliente(request.clienteId, chavePix.tipoConta.name)).thenReturn(HttpResponse.ok(dummyContaChavePix2))
+        Mockito.`when`(bcbClient.deletarChavePix(chavePix.chave, DeletePixKeyRequest(chavePix.chave, chavePix.conta.instituicaoIspb))).thenReturn(HttpResponse.ok())
         // acao
         val response = serviceGrpc.remover(request)
         // validacao
@@ -188,5 +215,10 @@ internal class RemoverChavePixEndpointTest(
     @MockBean(ItauErpClient::class)
     fun itauErpMock(): ItauErpClient {
         return Mockito.mock(ItauErpClient::class.java)
+    }
+
+    @MockBean(BcbClient::class)
+    fun bcbMock(): BcbClient {
+        return Mockito.mock(BcbClient::class.java)
     }
 }

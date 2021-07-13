@@ -4,11 +4,15 @@ import br.com.zupedu.armando.PixKeyManagerRegistrarServiceGrpc
 import br.com.zupedu.armando.RegistrarPixRequest
 import br.com.zupedu.armando.TipoChave
 import br.com.zupedu.armando.TipoConta
+import br.com.zupedu.armando.httpclients.BcbClient
+import br.com.zupedu.armando.httpclients.CreatePixResponse
 import br.com.zupedu.armando.httpclients.ItauErpClient
 import br.com.zupedu.armando.httpclients.dtos.ContaClienteResponse
 import br.com.zupedu.armando.pix.model.ChavePix
 import br.com.zupedu.armando.pix.model.ContaAssociada
 import br.com.zupedu.armando.pix.repository.ChavePixRepository
+import br.com.zupedu.armando.pix.utils.BcbAccountTypeMapper
+import br.com.zupedu.armando.pix.utils.BcbKeyTypeMapper
 import io.grpc.ManagedChannel
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
@@ -24,16 +28,23 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
+import java.time.LocalDateTime
 
 @MicronautTest(transactional = false)
 internal class NovaChavePixEndpointTest(
     private val serviceGrpc: PixKeyManagerRegistrarServiceGrpc.PixKeyManagerRegistrarServiceBlockingStub,
     private val itauErpClient: ItauErpClient,
+    private val bcbClient: BcbClient,
     private val repository: ChavePixRepository
 ) {
     @MockBean(ItauErpClient::class)
     fun itauErpMock(): ItauErpClient {
         return Mockito.mock(ItauErpClient::class.java)
+    }
+
+    @MockBean(BcbClient::class)
+    fun bcbMock(): BcbClient {
+        return Mockito.mock(BcbClient::class.java)
     }
 
     val dummyRequest = RegistrarPixRequest.newBuilder()
@@ -49,7 +60,7 @@ internal class NovaChavePixEndpointTest(
         tipoConta = br.com.zupedu.armando.pix.enums.TipoConta.CONTA_CORRENTE,
         conta = ContaAssociada(
             instituicaoNome = "ITAU",
-            instituicaoIspb = "123",
+            instituicaoIspb = "60701190",
             titularNome = "JOAO TESTADOR",
             titularCpf = "54486070046",
             agencia = "123",
@@ -57,9 +68,26 @@ internal class NovaChavePixEndpointTest(
         )
     )
 
+    val dummyBcbCreatePixResponse = CreatePixResponse(
+        BcbKeyTypeMapper.bcbKeyTypeMaps[dummyChavePix.tipoChave].toString(),
+        dummyChavePix.chave,
+        CreatePixResponse.BankAccountRequest(
+            dummyChavePix.conta.instituicaoIspb,
+            dummyChavePix.conta.agencia,
+            dummyChavePix.conta.numero,
+            BcbAccountTypeMapper.bcbAccountTypeMaps[dummyChavePix.tipoConta].toString()
+        ),
+        CreatePixResponse.OwnerRequest(
+            "NATURAL_PERSON",
+            dummyChavePix.conta.titularNome,
+            dummyChavePix.conta.titularCpf
+        ),
+        LocalDateTime.now().toString()
+    )
+
     val dummyContaClienteResponse = ContaClienteResponse(
         tipo = "CONTA_CORRENTE",
-        instituicao = ContaClienteResponse.InstituicaoResponse("ITAU", "123"),
+        instituicao = ContaClienteResponse.InstituicaoResponse("ITAU", "60701190"),
         agencia = "123",
         numero = "123456",
         titular = ContaClienteResponse.TitularResponse("JOAO TESTADOR", "54486070046")
@@ -241,6 +269,24 @@ internal class NovaChavePixEndpointTest(
         }
     }
 
+    @Test
+    fun `deve retornar um erro quando não conseguir cadastrar a chave pix no bcb`() {
+        // cenario
+        val request = dummyRequest.build()
+        Mockito.`when`(itauErpClient.buscarCliente(request.clienteId)).thenReturn(HttpResponse.ok())
+        Mockito.`when`(itauErpClient.buscarContaCliente(request.clienteId, request.tipoConta.name)).thenReturn(HttpResponse.ok(dummyContaClienteResponse))
+        Mockito.`when`(bcbClient.criarChavePix(dummyChavePix.toCriarPixRequest())).thenReturn(HttpResponse.unprocessableEntity())
+        // acao
+        val response = assertThrows<StatusRuntimeException> {
+            serviceGrpc.registrar(request)
+        }
+        // validacao
+        with(response) {
+            assertEquals(Status.INTERNAL.code, status.code)
+            assertEquals("Não foi possível cadastrar a chave pix no BCB.", status.description)
+        }
+    }
+
     // HAPPY PATH
     @Test
     fun `deve registrar uma chave pix`() {
@@ -248,6 +294,7 @@ internal class NovaChavePixEndpointTest(
         val request = dummyRequest.build()
         Mockito.`when`(itauErpClient.buscarCliente(request.clienteId)).thenReturn(HttpResponse.ok())
         Mockito.`when`(itauErpClient.buscarContaCliente(request.clienteId, request.tipoConta.name)).thenReturn(HttpResponse.ok(dummyContaClienteResponse))
+        Mockito.`when`(bcbClient.criarChavePix(dummyChavePix.toCriarPixRequest())).thenReturn(HttpResponse.created(dummyBcbCreatePixResponse))
         // acao
         val response = serviceGrpc.registrar(request)
         // validacao

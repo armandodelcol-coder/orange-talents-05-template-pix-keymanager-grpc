@@ -1,9 +1,9 @@
 micronaut:
   application:
     name: pixKeyManager
-
-# http clients
-itauerp.client.url: ${ITAUERP_CLIENT_URL:`http://localhost:9091/api`}
+  http:
+    client:
+      read-timeout: 5s
 
 # database
 datasources:
@@ -19,3 +19,7 @@ jpa:
     properties:
       hibernate.hbm2ddl.auto: update
       hibernate.show_sql: true
+
+# http clients
+itauerp.client.url: ${ITAUERP_CLIENT_URL:`http://localhost:9091/api`}
+bcb.client.url: ${BCB_CLIENT_URL:`http://localhost:8082/api`}

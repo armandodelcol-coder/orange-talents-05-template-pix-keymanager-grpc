@@ -5,7 +5,6 @@ import br.com.zupedu.armando.pix.enums.TipoConta
 import br.com.zupedu.armando.pix.model.ChavePix
 import br.com.zupedu.armando.pix.model.ContaAssociada
 import io.micronaut.core.annotation.Introspected
-import java.util.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
@@ -26,7 +25,7 @@ data class RegistrarChavePixDto(
         return ChavePix(
             clienteId = clienteId,
             tipoChave = tipoChave,
-            chave = if (chave.isNullOrBlank()) UUID.randomUUID().toString() else chave,
+            chave = chave,
             tipoConta = tipoConta,
             conta = conta
         )

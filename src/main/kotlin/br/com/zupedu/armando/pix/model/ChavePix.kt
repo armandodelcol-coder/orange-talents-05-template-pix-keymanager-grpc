@@ -5,6 +5,7 @@ import br.com.zupedu.armando.pix.enums.TipoChave
 import br.com.zupedu.armando.pix.enums.TipoConta
 import br.com.zupedu.armando.pix.utils.BcbAccountTypeMapper
 import br.com.zupedu.armando.pix.utils.BcbKeyTypeMapper
+import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 import javax.validation.Valid
@@ -37,6 +38,9 @@ class ChavePix(
     @Column(nullable = false, unique = true)
     val pixId: String = UUID.randomUUID().toString()
 
+    @Column(nullable = false)
+    val criadaEm: LocalDateTime = LocalDateTime.now()
+
     fun toCriarPixRequest(): CreatePixRequest {
         return CreatePixRequest(
             keyType = BcbKeyTypeMapper.bcbKeyTypeMaps[tipoChave].toString(),
@@ -54,4 +58,9 @@ class ChavePix(
             )
         )
     }
+
+    fun pertenceAoCliente(clienteId: String): Boolean {
+        return this.clienteId == clienteId
+    }
+
 }

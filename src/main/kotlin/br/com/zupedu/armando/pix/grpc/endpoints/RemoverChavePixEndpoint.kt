@@ -42,7 +42,7 @@ class RemoverChavePixEndpoint(
 
         // Valida se a chave pix pertence ao cliente informado
         logger.info("Validando se a chave pix pertence ao cliente informado")
-        if (conta.titularCpf != chavePix.conta.titularCpf) throw BadRequestErrorException("ChavePix não pertence ao cliente informado.")
+        if (!chavePix.pertenceAoCliente(removerChavePixDto.clienteId)) throw BadRequestErrorException("ChavePix não pertence ao cliente informado.")
 
         val deletarNoBcbResponse = bcbClient.deletarChavePix(chavePix.chave, DeletePixKeyRequest(chavePix.chave, chavePix.conta.instituicaoIspb))
         if (deletarNoBcbResponse.status.code != 200) throw BadRequestErrorException("Ocorreu um erro ao deletar a chave pix no BCB.")

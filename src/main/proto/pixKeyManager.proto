@@ -21,6 +21,10 @@ service PixKeyManagerBuscarService {
   rpc buscar (BuscarChavePixRequest) returns (BuscarChavePixResponse) {}
 }
 
+service PixKeyManagerListarService {
+  rpc listar (ListarPixRequest) returns (ListarPixResponse) {}
+}
+
 enum TipoChave {
   CHAVE_DESCONHECIDA = 0;
   CPF = 1;
@@ -82,4 +86,21 @@ message BuscarChavePixResponse {
   string pixId = 1;
   string clienteId = 2;
   ChavePix chavePix = 3;
+}
+
+message ListarPixRequest {
+  string clienteId = 1;
+}
+
+message ListarPixResponse {
+  message ChavePixListagemResponse {
+    string pixId = 1;
+    string clienteId = 2;
+    TipoChave tipoChave = 3;
+    string chave = 4;
+    TipoConta tipoConta = 5;
+    string criadaEm = 6;
+  }
+
+  repeated ChavePixListagemResponse chaves = 1;
 }

@@ -16,6 +16,7 @@ repositories {
 }
 
 micronaut {
+    runtime("netty")
     testRuntime("junit5")
     processing {
         incremental(true)
@@ -46,6 +47,8 @@ dependencies {
     // Tests
     testImplementation("com.h2database:h2")
     testImplementation("org.mockito:mockito-core:3.8.0")
+    // Para implementar o health check
+    implementation("io.micronaut:micronaut-management")
 }
 
 

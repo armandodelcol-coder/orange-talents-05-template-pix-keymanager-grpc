@@ -42,8 +42,8 @@ dependencies {
     implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
     annotationProcessor("io.micronaut.data:micronaut-data-processor")
-    // MYSQL
-    runtimeOnly("mysql:mysql-connector-java")
+    // POSTGRES
+    runtimeOnly("org.postgresql:postgresql")
     // Tests
     testImplementation("com.h2database:h2")
     testImplementation("org.mockito:mockito-core:3.8.0")

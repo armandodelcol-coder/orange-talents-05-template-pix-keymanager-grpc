@@ -9,12 +9,12 @@ micronaut:
 # database
 datasources:
   default:
-    url: jdbc:mysql://${DB_HOST:localhost}:3306/pix?createDatabaseIfNotExist=true&serverTimezone=UTC
-    driverClassName: com.mysql.cj.jdbc.Driver
-    username: root
-    password: ${DB_PASSWORD:1234}
+    url: ${DB_URI:`jdbc:postgresql://localhost:5432/postgres`}
+    driverClassName: org.postgresql.Driver
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:q1w2e3}
     schema-generate: CREATE_DROP
-    dialect: MYSQL
+    dialect: ${DB_DIALECT:POSTGRES}
 jpa:
   default:
     properties:
@@ -22,8 +22,8 @@ jpa:
       hibernate.show_sql: true
 
 # http clients
-itauerp.client.url: ${ITAUERP_CLIENT_URL:`http://localhost:9091/api`}
-bcb.client.url: ${BCB_CLIENT_URL:`http://localhost:8082/api`}
+itauerp.client.url: ${ITAU_URL:`http://localhost:9091/api`}
+bcb.client.url: ${BCB_URL:`http://localhost:8082/api`}
 
 grpc:
   server:
